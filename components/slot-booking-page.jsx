@@ -181,6 +181,7 @@ export default function SlotBookingPage() {
              })
              
              if (verifyRes.ok) { 
+
                 handleConfirmPayment()
              } else {
                 setPaymentStatus({ type: 'error', message: "Payment verification failed! Please contact support." })
@@ -458,6 +459,37 @@ export default function SlotBookingPage() {
                 className="w-full bg-red-600 hover:bg-red-700 text-white"
               >
                 Close
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {paymentStatus && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-2xl p-6 max-w-sm w-full shadow-2xl">
+            <div className="flex flex-col items-center text-center space-y-4">
+              <div className={`w-12 h-12 rounded-full flex items-center justify-center ${paymentStatus.type === 'success' ? 'bg-green-100' : 'bg-red-100'}`}>
+                {paymentStatus.type === 'success' ? (
+                  <CheckCircle className="w-8 h-8 text-green-600" />
+                ) : (
+                  <AlertCircle className="w-8 h-8 text-red-600" />
+                )}
+              </div>
+              <h3 className="text-lg font-bold text-gray-900">
+                {paymentStatus.type === 'success' ? 'Payment Successful' : 'Payment Failed'}
+              </h3>
+              <p className="text-gray-600">{paymentStatus.message}</p>
+              <Button 
+                onClick={() => {
+                  setPaymentStatus(null)
+                  if (paymentStatus.type === 'success') {
+                    // Optional: redirect or perform other actions
+                  }
+                }}
+                className={`w-full text-white ${paymentStatus.type === 'success' ? 'bg-green-600 hover:bg-green-700' : 'bg-red-600 hover:bg-red-700'}`}
+              >
+                {paymentStatus.type === 'success' ? 'Done' : 'Try Again'}
               </Button>
             </div>
           </div>
