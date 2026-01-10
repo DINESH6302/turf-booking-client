@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import { ChevronLeft, ChevronRight, Calendar } from "lucide-react"
-import { getISTDate } from "@/lib/utils"
+import { getISTDate, API_BASE_URL } from "@/lib/utils"
 
 export default function DateSelector({ selectedDate, onDateSelect, onBookedSlotsReceived }) {
   const [currentMonth, setCurrentMonth] = useState(() => {
@@ -50,11 +50,11 @@ export default function DateSelector({ selectedDate, onDateSelect, onBookedSlots
 
         console.log("[v0] Fetching booked slots for date:", dateString)
 
-        const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL
-        const response = await fetch(`${baseUrl}/v1/turf/slots?date=${dateString}`, {
+        const response = await fetch(`${API_BASE_URL}/v1/turf/slots?date=${dateString}`, {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
+
           },
         })
 

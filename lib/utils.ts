@@ -22,3 +22,5 @@ export function getISTTimeInMinutes() {
   const istDate = getISTDate();
   return istDate.getHours() * 60 + istDate.getMinutes();
 }
+
+export const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "https://turfbooking-wdc7.onrender.com";

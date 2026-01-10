@@ -10,6 +10,7 @@ import UserInfoForm from "./user-info-form"
 import PricingSummary from "./pricing-summary"
 import PaymentModal from "./payment-modal"
 import TimeSelection from "./time-selection"
+import { API_BASE_URL } from "@/lib/utils"
 
 export default function SlotBookingPage() {
   const router = useRouter()
@@ -99,8 +100,7 @@ export default function SlotBookingPage() {
     }
 
     try {
-      const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL
-      const response = await fetch(`${baseUrl}/v1/turf/events`, {
+      const response = await fetch(`${API_BASE_URL}/v1/turf/events`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -136,8 +136,7 @@ export default function SlotBookingPage() {
 
     try {
       // 1. Create Order
-      const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL
-      const response = await fetch(`${baseUrl}/v1/turf/payment/order`, {
+      const response = await fetch(`${API_BASE_URL}/v1/turf/payment/order`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -172,8 +171,7 @@ export default function SlotBookingPage() {
                 signature: response.razorpay_signature
              }
 
-             const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL
-             const verifyRes = await fetch(`${baseUrl}/v1/turf/payment/verify-payment`, {
+             const verifyRes = await fetch(`${API_BASE_URL}/v1/turf/payment/verify-payment`, {
                 method: "POST",
                 headers: {
                   "Content-Type": "application/json",
@@ -263,8 +261,7 @@ export default function SlotBookingPage() {
   const handleCancelBooking = async () => {
     if (currentEventId) {
       try {
-        const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL
-        await fetch(`${baseUrl}/v1/turf/events?eventId=${currentEventId}`, {
+        await fetch(`${API_BASE_URL}/v1/turf/events?eventId=${currentEventId}`, {
           method: "DELETE",
         })
       } catch (error) {
@@ -282,7 +279,8 @@ export default function SlotBookingPage() {
           <div className="flex items-center justify-between mb-2">
             <h1 className="text-4xl font-bold text-blue-900">ProTurf</h1>
             <a
-              href="#location"
+              target="_blank"
+              href="https://maps.app.goo.gl/AVS8rXHinu4kkbyt6"
               className="pr-3 flex flex-col items-center gap-0 text-blue-600 hover:text-blue-700 transition font-semibold translate-y-2"
             >
               <img 
