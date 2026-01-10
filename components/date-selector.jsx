@@ -2,10 +2,11 @@
 
 import { useState } from "react"
 import { ChevronLeft, ChevronRight, Calendar } from "lucide-react"
+import { getISTDate } from "@/lib/utils"
 
 export default function DateSelector({ selectedDate, onDateSelect, onBookedSlotsReceived }) {
   const [currentMonth, setCurrentMonth] = useState(() => {
-    const today = new Date()
+    const today = getISTDate()
     return new Date(today.getFullYear(), today.getMonth())
   })
 
@@ -17,7 +18,7 @@ export default function DateSelector({ selectedDate, onDateSelect, onBookedSlots
     return new Date(date.getFullYear(), date.getMonth(), 1).getDay()
   }
 
-  const today = new Date()
+  const today = getISTDate()
   today.setHours(0, 0, 0, 0)
 
   const daysInMonth = getDaysInMonth(currentMonth)
@@ -49,7 +50,8 @@ export default function DateSelector({ selectedDate, onDateSelect, onBookedSlots
 
         console.log("[v0] Fetching booked slots for date:", dateString)
 
-        const response = await fetch(`https://turfbooking-wdc7.onrender.com/api/v1/turf/slots?date=${dateString}`, {
+        const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:9090"
+        const response = await fetch(`${baseUrl}/api/v1/turf/slots?date=${dateString}`, {
           method: "GET",
           headers: {
             "Content-Type": "application/json",

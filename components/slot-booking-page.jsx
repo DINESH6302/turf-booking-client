@@ -25,6 +25,7 @@ export default function SlotBookingPage() {
   const [bookedSlots, setBookedSlots] = useState([])
   const [isSummaryModalOpen, setIsSummaryModalOpen] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
+  const [isFetchingSlots, setIsFetchingSlots] = useState(false)
   const [apiError, setApiError] = useState(null)
   const [currentEventId, setCurrentEventId] = useState(null)
 
@@ -98,7 +99,8 @@ export default function SlotBookingPage() {
     }
 
     try {
-      const response = await fetch("https://turfbooking-wdc7.onrender.com/api/v1/turf/events", {
+      const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:9090"
+      const response = await fetch(`${baseUrl}/api/v1/turf/events`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -134,7 +136,8 @@ export default function SlotBookingPage() {
 
     try {
       // 1. Create Order
-      const response = await fetch("https://turfbooking-wdc7.onrender.com/api/v1/turf/payment/order", {
+      const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:9090"
+      const response = await fetch(`${baseUrl}/api/v1/turf/payment/order`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -169,7 +172,8 @@ export default function SlotBookingPage() {
                 signature: response.razorpay_signature
              }
 
-             const verifyRes = await fetch("https://turfbooking-wdc7.onrender.com/api/v1/turf/payment/verify-payment", {
+             const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:9090"
+             const verifyRes = await fetch(`${baseUrl}/api/v1/turf/payment/verify-payment`, {
                 method: "POST",
                 headers: {
                   "Content-Type": "application/json",
@@ -248,12 +252,19 @@ export default function SlotBookingPage() {
   const handleDateSelect = (date) => {
     setSelectedDate(date)
     setSelectedTime(null)
+    setIsFetchingSlots(true)
+  }
+
+  const handleBookedSlotsReceived = (slots) => {
+    setBookedSlots(slots)
+    setIsFetchingSlots(false)
   }
 
   const handleCancelBooking = async () => {
     if (currentEventId) {
       try {
-        await fetch(`https://turfbooking-wdc7.onrender.com/api/v1/turf/events?eventId=${currentEventId}`, {
+        const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:9090"
+        await fetch(`${baseUrl}/api/v1/turf/events?eventId=${currentEventId}`, {
           method: "DELETE",
         })
       } catch (error) {
@@ -296,7 +307,7 @@ export default function SlotBookingPage() {
             <DateSelector
               selectedDate={selectedDate}
               onDateSelect={handleDateSelect}
-              onBookedSlotsReceived={setBookedSlots}
+              onBookedSlotsReceived={handleBookedSlotsReceived}
             />
 
 
@@ -305,7 +316,7 @@ export default function SlotBookingPage() {
               <div>
                 <div className="flex justify-between items-center mb-2">
                   <label className="block text-sm font-semibold text-slate-800">Select Time Slot</label>
-                  {selectedTime && selectedDuration > 0 && (
+                  {selectedTime && selectedDuration > 0 && !isFetchingSlots && (
                     <span className="text-sm font-bold text-blue-600 bg-blue-50 px-3 py-1 rounded-lg border border-blue-100">
                       {(() => {
                         const [h, m] = selectedTime.split(":").map(Number)
@@ -325,14 +336,23 @@ export default function SlotBookingPage() {
                     </span>
                   )}
                 </div>
-                <TimeSelection
-                  selectedTime={selectedTime}
-                  onTimeSelect={setSelectedTime}
-                  bookedSlots={bookedSlots}
-                  selectedDate={selectedDate}
-                  selectedDuration={selectedDuration}
-                  onDurationChange={setSelectedDuration}
-                />
+                {isFetchingSlots ? (
+                  <div className="flex items-center justify-center p-8 bg-slate-50 rounded-xl border border-slate-100">
+                    <div className="flex flex-col items-center gap-2">
+                       <div className="w-6 h-6 border-2 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+                       <p className="text-sm font-medium text-blue-800">Fetching Time Slots...</p>
+                    </div>
+                  </div>
+                ) : (
+                  <TimeSelection
+                    selectedTime={selectedTime}
+                    onTimeSelect={setSelectedTime}
+                    bookedSlots={bookedSlots}
+                    selectedDate={selectedDate}
+                    selectedDuration={selectedDuration}
+                    onDurationChange={setSelectedDuration}
+                  />
+                )}
               </div>
             )}
 

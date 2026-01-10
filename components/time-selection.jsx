@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
+import { getISTDate, getISTTimeInMinutes } from "@/lib/utils"
 
 export default function TimeSelection({
   selectedTime,
@@ -33,7 +34,12 @@ export default function TimeSelection({
       const [startH, startMin] = slot.startTime.split(":").map(Number)
       const [endH, endMin] = slot.endTime.split(":").map(Number)
       const bookStart = startH * 60 + startMin
-      const bookEnd = endH * 60 + endMin
+      let bookEnd = endH * 60 + endMin
+
+      // Handle crossing midnight or ending exactly at midnight (00:00)
+      if (bookEnd <= bookStart) {
+        bookEnd += 24 * 60 // Treat as next day (e.g., 00:00 becomes 24:00)
+      }
 
       // Check for overlap
       return Math.max(slotStart, bookStart) < Math.min(slotEnd, bookEnd)
@@ -42,14 +48,16 @@ export default function TimeSelection({
 
   const isPastTime = (h, m) => {
     if (!selectedDate) return false
-    const now = new Date()
-    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate())
+    
+    // Use IST based "now" for comparison
+    const nowIST = getISTDate()
+    const todayIST = new Date(nowIST.getFullYear(), nowIST.getMonth(), nowIST.getDate())
     const selectedDateNormalized = new Date(selectedDate.getFullYear(), selectedDate.getMonth(), selectedDate.getDate())
 
-    if (selectedDateNormalized.getTime() < today.getTime()) return true
-    if (selectedDateNormalized.getTime() > today.getTime()) return false
+    if (selectedDateNormalized.getTime() < todayIST.getTime()) return true
+    if (selectedDateNormalized.getTime() > todayIST.getTime()) return false
 
-    const currentMinutes = now.getHours() * 60 + now.getMinutes()
+    const currentMinutes = getISTTimeInMinutes()
     const slotStart = h * 60 + m
     // Allow selecting slots that haven't ended yet (30 min buffer)
     return slotStart + 30 <= currentMinutes
