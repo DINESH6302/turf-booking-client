@@ -340,7 +340,7 @@ export default function SlotBookingPage() {
               <>
                  <div className="mb-4">
                   {selectedTime && selectedDuration > 0 && !isFetchingSlots && (
-                    <div className="text-sm font-bold text-blue-600 bg-blue-50 px-4 py-3 rounded-xl border border-blue-100 flex justify-between items-center">
+                    <div className="text-xs sm:text-sm font-bold text-blue-600 bg-blue-50 px-4 py-3 rounded-xl border border-blue-100 flex justify-between items-center">
                       <span>Selected Slot</span>
                       <span>
                       {(() => {
