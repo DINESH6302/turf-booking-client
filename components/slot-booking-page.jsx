@@ -314,25 +314,6 @@ export default function SlotBookingPage() {
               <div>
                 <div className="flex justify-between items-center mb-2">
                   <label className="block text-sm font-semibold text-slate-800">Select Time Slot</label>
-                  {selectedTime && selectedDuration > 0 && !isFetchingSlots && (
-                    <span className="text-sm font-bold text-blue-600 bg-blue-50 px-3 py-1 rounded-lg border border-blue-100">
-                      {(() => {
-                        const [h, m] = selectedTime.split(":").map(Number)
-                        const startMins = h * 60 + m
-                        const endMins = startMins + selectedDuration * 60
-                        
-                        const format = (mins) => {
-                          const hours = Math.floor(mins / 60)
-                          const minutes = mins % 60
-                          const period = (hours % 24) >= 12 ? "PM" : "AM"
-                          const h12 = hours % 12 || 12
-                          return `${h12}:${minutes.toString().padStart(2, "0")} ${period}`
-                        }
-                        
-                        return `${format(startMins)} - ${format(endMins)} (${selectedDuration === 0.5 ? "30 mins" : selectedDuration + " hrs"})`
-                      })()}
-                    </span>
-                  )}
                 </div>
                 {isFetchingSlots ? (
                   <div className="flex items-center justify-center p-8 bg-slate-50 rounded-xl border border-slate-100">
@@ -357,6 +338,31 @@ export default function SlotBookingPage() {
             {/* User Info */}
             {selectedTime && (
               <>
+                 <div className="mb-4">
+                  {selectedTime && selectedDuration > 0 && !isFetchingSlots && (
+                    <div className="text-sm font-bold text-blue-600 bg-blue-50 px-4 py-3 rounded-xl border border-blue-100 flex justify-between items-center">
+                      <span>Selected Slot</span>
+                      <span>
+                      {(() => {
+                        const [h, m] = selectedTime.split(":").map(Number)
+                        const startMins = h * 60 + m
+                        const endMins = startMins + selectedDuration * 60
+                        
+                        const format = (mins) => {
+                          const hours = Math.floor(mins / 60)
+                          const minutes = mins % 60
+                          const period = (hours % 24) >= 12 ? "PM" : "AM"
+                          const h12 = hours % 12 || 12
+                          return `${h12}:${minutes.toString().padStart(2, "0")} ${period}`
+                        }
+                        
+                        return `${format(startMins)} - ${format(endMins)} (${selectedDuration === 0.5 ? "30 mins" : selectedDuration + " hrs"})`
+                      })()}
+                      </span>
+                    </div>
+                  )}
+                 </div>
+
                 <label className="block text-sm font-semibold text-blue-900 mb-2">Your Details</label>
                 <UserInfoForm
                   name={userName}

@@ -138,7 +138,7 @@ export default function TimeSelection({
 
   return (
     <div className="space-y-4">
-      <div className="grid grid-cols-2 xs:grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-3">
+      <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-3">
         {hours.map((hour) => {
           const is00Booked = isSlotBooked(hour, 0)
           const is00Past = isPastTime(hour, 0)
