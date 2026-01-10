@@ -49,7 +49,7 @@ export default function DateSelector({ selectedDate, onDateSelect, onBookedSlots
 
         console.log("[v0] Fetching booked slots for date:", dateString)
 
-        const response = await fetch(`http://localhost:9090/api/v1/turf/slots?date=${dateString}`, {
+        const response = await fetch(`https://turfbooking-wdc7.onrender.com/api/v1/turf/slots?date=${dateString}`, {
           method: "GET",
           headers: {
             "Content-Type": "application/json",

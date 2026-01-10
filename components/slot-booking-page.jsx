@@ -98,7 +98,7 @@ export default function SlotBookingPage() {
     }
 
     try {
-      const response = await fetch("http://localhost:9090/api/v1/turf/events", {
+      const response = await fetch("https://turfbooking-wdc7.onrender.com/api/v1/turf/events", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -134,7 +134,7 @@ export default function SlotBookingPage() {
 
     try {
       // 1. Create Order
-      const response = await fetch("http://localhost:9090/api/v1/turf/payment/order", {
+      const response = await fetch("https://turfbooking-wdc7.onrender.com/api/v1/turf/payment/order", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -169,7 +169,7 @@ export default function SlotBookingPage() {
                 signature: response.razorpay_signature
              }
 
-             const verifyRes = await fetch("http://localhost:9090/api/v1/turf/payment/verify-payment", {
+             const verifyRes = await fetch("https://turfbooking-wdc7.onrender.com/api/v1/turf/payment/verify-payment", {
                 method: "POST",
                 headers: {
                   "Content-Type": "application/json",
@@ -253,7 +253,7 @@ export default function SlotBookingPage() {
   const handleCancelBooking = async () => {
     if (currentEventId) {
       try {
-        await fetch(`http://localhost:9090/api/v1/turf/events?eventId=${currentEventId}`, {
+        await fetch(`https://turfbooking-wdc7.onrender.com/api/v1/turf/events?eventId=${currentEventId}`, {
           method: "DELETE",
         })
       } catch (error) {
