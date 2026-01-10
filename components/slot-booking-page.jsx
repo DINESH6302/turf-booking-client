@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
-import { MapPin, X, AlertCircle } from "lucide-react"
+import { MapPin, X, AlertCircle, CheckCircle } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import DateSelector from "./date-selector"
@@ -29,6 +29,7 @@ export default function SlotBookingPage() {
   const [isFetchingSlots, setIsFetchingSlots] = useState(false)
   const [apiError, setApiError] = useState(null)
   const [currentEventId, setCurrentEventId] = useState(null)
+  const [paymentStatus, setPaymentStatus] = useState(null) // { type: 'success' | 'error', message: string }
 
   useEffect(() => {
     const price = Number(process.env.NEXT_PUBLIC_PRICE_PER_HOUR) || 500
@@ -156,7 +157,7 @@ export default function SlotBookingPage() {
         key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID, 
         amount: orderData.amount,
         currency: "INR",
-        name: "ProTurf",
+        name: "Turf Corner",
         description: "Turf Booking Transaction",
         // image: "https://example.com/your_logo", 
         order_id: orderData.id, 
@@ -166,9 +167,9 @@ export default function SlotBookingPage() {
           try {
              // Verification payload
              const verificationData = {
-                orderId: response.razorpay_order_id,
-                paymentId: response.razorpay_payment_id,
-                signature: response.razorpay_signature
+                razorpay_order_id: response.razorpay_order_id,
+                razorpay_payment_id: response.razorpay_payment_id,
+                razorpay_signature: response.razorpay_signature
              }
 
              const verifyRes = await fetch(`${API_BASE_URL}/v1/turf/payment/verify-payment`, {
@@ -178,19 +179,17 @@ export default function SlotBookingPage() {
                 },
                 body: JSON.stringify(verificationData)
              })
-
-            //  const verifyJson = await verifyRes.json()
              
              if (verifyRes.ok) { 
                 handleConfirmPayment()
              } else {
-                alert("Payment verification failed! Please contact support.")
+                setPaymentStatus({ type: 'error', message: "Payment verification failed! Please contact support." })
                 handleCancelBooking()
              }
 
           } catch (err) {
              console.error("Verification Error", err)
-             alert("Payment verification failed due to network error.")
+             setPaymentStatus({ type: 'error', message: "Payment verification failed due to network error." })
              handleCancelBooking()
           }
         },
@@ -204,7 +203,7 @@ export default function SlotBookingPage() {
           contact: userPhone,
         },
         notes: {
-          address: "ProTurf Office",
+          address: "Turf Corner Office",
         },
         theme: {
           color: "#2563eb",
@@ -213,14 +212,14 @@ export default function SlotBookingPage() {
 
       const paymentObject = new window.Razorpay(options)
       paymentObject.on("payment.failed", function (response) {
-         alert(`Payment Failed: ${response.error.description}`)
+         setPaymentStatus({ type: 'error', message: `Payment Failed: ${response.error.description}` })
          handleCancelBooking()
       })
       paymentObject.open()
 
     } catch (error) {
        console.error("Payment Error:", error)
-       alert("Something went wrong while initiating payment.")
+       setPaymentStatus({ type: 'error', message: "Something went wrong while initiating payment." })
     }
   }
 
@@ -234,7 +233,7 @@ export default function SlotBookingPage() {
     setUserPhone("")
     setValidationErrors({})
     setIsSummaryModalOpen(false)
-    alert("Booking confirmed! Your slot has been reserved.")
+    setPaymentStatus({ type: 'success', message: "Your slot has been reserved." })
   }
 
   const handleClearSelection = () => {
@@ -277,7 +276,7 @@ export default function SlotBookingPage() {
       <div className="max-w-md mx-auto px-4 py-6">
         <div className="mb-5">
           <div className="flex items-center justify-between mb-2">
-            <h1 className="text-4xl font-bold text-blue-900">ProTurf</h1>
+            <h1 className="text-4xl font-bold text-blue-900">Turf Corner</h1>
             <a
               target="_blank"
               href="https://maps.app.goo.gl/AVS8rXHinu4kkbyt6"
