@@ -99,8 +99,8 @@ export default function SlotBookingPage() {
     }
 
     try {
-      const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:9090"
-      const response = await fetch(`${baseUrl}/api/v1/turf/events`, {
+      const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL
+      const response = await fetch(`${baseUrl}/v1/turf/events`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -136,8 +136,8 @@ export default function SlotBookingPage() {
 
     try {
       // 1. Create Order
-      const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:9090"
-      const response = await fetch(`${baseUrl}/api/v1/turf/payment/order`, {
+      const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL
+      const response = await fetch(`${baseUrl}/v1/turf/payment/order`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -172,8 +172,8 @@ export default function SlotBookingPage() {
                 signature: response.razorpay_signature
              }
 
-             const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:9090"
-             const verifyRes = await fetch(`${baseUrl}/api/v1/turf/payment/verify-payment`, {
+             const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL
+             const verifyRes = await fetch(`${baseUrl}/v1/turf/payment/verify-payment`, {
                 method: "POST",
                 headers: {
                   "Content-Type": "application/json",
@@ -263,8 +263,8 @@ export default function SlotBookingPage() {
   const handleCancelBooking = async () => {
     if (currentEventId) {
       try {
-        const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:9090"
-        await fetch(`${baseUrl}/api/v1/turf/events?eventId=${currentEventId}`, {
+        const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL
+        await fetch(`${baseUrl}/v1/turf/events?eventId=${currentEventId}`, {
           method: "DELETE",
         })
       } catch (error) {

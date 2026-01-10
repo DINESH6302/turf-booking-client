@@ -50,8 +50,8 @@ export default function DateSelector({ selectedDate, onDateSelect, onBookedSlots
 
         console.log("[v0] Fetching booked slots for date:", dateString)
 
-        const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:9090"
-        const response = await fetch(`${baseUrl}/api/v1/turf/slots?date=${dateString}`, {
+        const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL
+        const response = await fetch(`${baseUrl}/v1/turf/slots?date=${dateString}`, {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
