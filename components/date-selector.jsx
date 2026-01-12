@@ -6,9 +6,15 @@ import { getISTDate, API_BASE_URL } from "@/lib/utils"
 
 export default function DateSelector({ selectedDate, onDateSelect, onBookedSlotsReceived }) {
   const [currentMonth, setCurrentMonth] = useState(() => {
+    // Initializing with IST Date prevents hydration mismatch mostly, 
+    // but we use useEffect to sync if there's any drift.
     const today = getISTDate()
     return new Date(today.getFullYear(), today.getMonth())
   })
+  
+  // Ensure we are using the very latest "Now" for blocking info
+  const today = getISTDate()
+  today.setHours(0, 0, 0, 0)
 
   const getDaysInMonth = (date) => {
     return new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate()
@@ -17,9 +23,6 @@ export default function DateSelector({ selectedDate, onDateSelect, onBookedSlots
   const getFirstDayOfMonth = (date) => {
     return new Date(date.getFullYear(), date.getMonth(), 1).getDay()
   }
-
-  const today = getISTDate()
-  today.setHours(0, 0, 0, 0)
 
   const daysInMonth = getDaysInMonth(currentMonth)
   const firstDay = getFirstDayOfMonth(currentMonth)

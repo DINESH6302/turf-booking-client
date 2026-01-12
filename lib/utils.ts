@@ -8,14 +8,41 @@ export function cn(...inputs: ClassValue[]) {
 export function getISTDate() {
   const now = new Date();
   
-  // Get UTC time in milliseconds
-  const utcTime = now.getTime() + (now.getTimezoneOffset() * 60000);
+  // Use Intl.DateTimeFormat to get the accurate time components in IST (Asia/Kolkata)
+  // This avoids issues with local system offsets or daylight savings logic
+  const options = { 
+    timeZone: "Asia/Kolkata", 
+    year: 'numeric', 
+    month: 'numeric', 
+    day: 'numeric', 
+    hour: 'numeric', 
+    minute: 'numeric', 
+    second: 'numeric',
+    hour12: false 
+  } as const;
   
-  // Add IST offset (5 hours 30 minutes = 330 minutes)
-  // 330 * 60 * 1000 = 19800000 ms
-  const istTime = new Date(utcTime + (330 * 60000));
+  const formatter = new Intl.DateTimeFormat('en-US', options);
+  const parts = formatter.formatToParts(now);
   
-  return istTime;
+  const dateParts: {[key: string]: number} = {};
+  parts.forEach(({ type, value }) => { 
+    if (type !== 'literal') {
+      dateParts[type] = parseInt(value, 10);
+    }
+  });
+
+  // Reconstruct the date using the IST components
+  // Note: We use the local Date constructor with these components so that 
+  // getHours(), getDate() etc. return the IST values.
+  // The actual timestamp will represent "IST time on Local Clock", which is what we need for comparison.
+  return new Date(
+    dateParts.year, 
+    dateParts.month - 1, 
+    dateParts.day, 
+    dateParts.hour, 
+    dateParts.minute, 
+    dateParts.second
+  );
 }
 
 export function getISTTimeInMinutes() {
